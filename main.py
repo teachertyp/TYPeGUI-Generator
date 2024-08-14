@@ -64,29 +64,34 @@ class GUIBuilder:
         self.entry_col = tk.Entry(self.edit_frame)
         self.entry_col.grid(row=3, column=1, sticky=tk.EW)
 
+        self.label_colspan = tk.Label(self.edit_frame, text="Colspan:")
+        self.label_colspan.grid(row=4, column=0, sticky=tk.W)
+        self.entry_colspan = tk.Entry(self.edit_frame)
+        self.entry_colspan.grid(row=4, column=1, sticky=tk.EW)
+
         self.label_event = tk.Label(self.edit_frame, text="Event:")
-        self.label_event.grid(row=4, column=0, sticky=tk.W)
+        self.label_event.grid(row=5, column=0, sticky=tk.W)
 
         self.event_combobox = ttk.Combobox(self.edit_frame, values=["Button-1", "Button-2", "Button-3", "KeyPress", "KeyRelease", "FocusOut", "FocusIn"])
-        self.event_combobox.grid(row=4, column=1, sticky=tk.EW)
+        self.event_combobox.grid(row=5, column=1, sticky=tk.EW)
         
                 # Add binding to refocus on the listbox after selecting an event
         self.event_combobox.bind("<<ComboboxSelected>>", self.on_event_selected)
         self.event_combobox.configure(exportselection=False)
         
         self.label_function = tk.Label(self.edit_frame, text="Function Name:")
-        self.label_function.grid(row=5, column=0, sticky=tk.W)
+        self.label_function.grid(row=6, column=0, sticky=tk.W)
         self.entry_function = tk.Entry(self.edit_frame)
-        self.entry_function.grid(row=5, column=1, sticky=tk.EW)
+        self.entry_function.grid(row=6, column=1, sticky=tk.EW)
 
-        self.save_button = tk.Button(self.edit_frame, text="Save", command=self.save_changes, state=tk.DISABLED)
-        self.save_button.grid(row=6, column=0, columnspan=2, sticky=tk.EW)
+        self.save_button = tk.Button(self.edit_frame, text="Зберегти", command=self.save_changes, state=tk.DISABLED)
+        self.save_button.grid(row=7, column=0, columnspan=2, sticky=tk.EW)
 
-        self.delete_button = tk.Button(self.edit_frame, text="Delete", command=self.delete_control, state=tk.DISABLED)
-        self.delete_button.grid(row=7, column=0, columnspan=2, sticky=tk.EW)
+        self.delete_button = tk.Button(self.edit_frame, text="Видалити", command=self.delete_control, state=tk.DISABLED)
+        self.delete_button.grid(row=8, column=0, columnspan=2, sticky=tk.EW)
 
-        self.generate_button = tk.Button(self.edit_frame, text="Generate Code", command=self.generate_code, state=tk.DISABLED)
-        self.generate_button.grid(row=8, column=0, columnspan=2, sticky=tk.EW)
+        self.generate_button = tk.Button(self.edit_frame, text="Згенерувати код", command=self.generate_code, state=tk.DISABLED)
+        self.generate_button.grid(row=9, column=0, columnspan=2, sticky=tk.EW)
         
         self.event_options = {
             "Label": ["<Button-1>", "<Button-2>", "<Button-3>","<Motion>","<Leave>"],
@@ -111,7 +116,7 @@ class GUIBuilder:
 
         
         root.config(menu=menu_bar)
-        self.run_file_button = tk.Button(self.edit_frame, text="Open and Execute Code", command=self.open_and_execute_code, state=tk.DISABLED)
+        self.run_file_button = tk.Button(self.edit_frame, text="Відкрити і Виконати", command=self.open_and_execute_code, state=tk.DISABLED)
         self.run_file_button.grid(row=9, column=0, columnspan=2, sticky=tk.EW)
         #self.open_file_button.pack(pady=10)
 
@@ -121,7 +126,7 @@ class GUIBuilder:
         new_file_path = base_path + ".py"        
         # Відкрити нове вікно з вмістом згенерованого файлу
         self.code_window = tk.Toplevel(self.root)
-        self.code_window.title("Code Viewer"+new_file_path)
+        self.code_window.title("Pyzarus code editor"+new_file_path)
 
         # Створити віджет для відображення вмісту
         self.code_text = scrolledtext.ScrolledText(self.code_window, wrap=tk.WORD, width=80, height=20)
@@ -140,11 +145,11 @@ class GUIBuilder:
             self.code_text.insert(tk.END, "# No code found\n")
 
         # Кнопка для збереження змін
-        save_button = tk.Button(self.code_window, text="Save", command=self.save_code)
+        save_button = tk.Button(self.code_window, text="Зберегти", command=self.save_code)
         save_button.pack(side=tk.LEFT, padx=10, pady=10)
 
         # Кнопка для виконання згенерованого коду
-        execute_button = tk.Button(self.code_window, text="Execute Code", command=self.execute_code)
+        execute_button = tk.Button(self.code_window, text="Виконати", command=self.execute_code)
         execute_button.pack(pady=10)
     
 
@@ -272,7 +277,7 @@ class GUIBuilder:
         row = len(self.controls)
         control_id = f"{control_class.__name__.lower()}_{row}"
         control = control_class(self.frame, **kwargs)
-        control.grid(row=row, column=0, padx=5, pady=5, sticky='w')
+        control.grid(row=row, column=0, padx=5, pady=5, sticky='we')
         self.controls[control_id] = control
         self.control_listbox.insert(tk.END, control_id)
                 # Зберігаємо додаткові атрибути у словнику control
@@ -308,14 +313,17 @@ class GUIBuilder:
                 self.entry_text.insert(0, control.cget('text'))
             else:
                 self.entry_text.delete(0, tk.END)
-                self.entry_text.insert(0, "")
+                self.entry_text.insert(0, control.get())
 
-            row, col = control.grid_info().get('row', 0), control.grid_info().get('column', 0)
+            row, col, colspan = control.grid_info().get('row', 0), control.grid_info().get('column', 0), control.grid_info().get('columnspan', 0)
             self.entry_row.delete(0, tk.END)
             self.entry_row.insert(0, row)
 
             self.entry_col.delete(0, tk.END)
             self.entry_col.insert(0, col)
+
+            self.entry_colspan.delete(0, tk.END)
+            self.entry_colspan.insert(0, colspan)
 
             event_bindings = self.get_event_bindings(control)
             self.event_combobox.set('')
@@ -365,6 +373,9 @@ class GUIBuilder:
         
         new_col = self.entry_col.get()
         self.entry_col.delete(0, tk.END)
+
+        new_colspan = self.entry_colspan.get()
+        self.entry_colspan.delete(0, tk.END)
         
         new_event = self.event_combobox.get()
         self.event_combobox.set('')  # Очищуємо комбо-бокс
@@ -374,8 +385,13 @@ class GUIBuilder:
         self.entry_function.delete(0, tk.END)
         print("fname:", function_name)
 
-        self.current_control.config(text=new_text)
-        self.current_control.grid(row=int(new_row), column=int(new_col), padx=5, pady=5, sticky='w')
+        if isinstance(self.current_control, tk.Entry):
+            self.current_control.delete(0, tk.END)
+            self.current_control.insert(0, new_text)
+        elif isinstance(self.current_control, tk.Label) or isinstance(self.current_control, tk.Button):
+            self.current_control.config(text=new_text)
+
+        self.current_control.grid(row=int(new_row), column=int(new_col), columnspan=int(new_colspan), padx=5, pady=5, sticky='ew')
 
         if new_event and function_name:
             self.current_control.unbind(f"<{new_event}>")
@@ -392,6 +408,8 @@ class GUIBuilder:
         else:
             # Оновлюємо контроль у словнику, якщо ідентифікатор не змінився
             self.controls[control_id] = self.current_control
+        self.save_button.config(state=tk.DISABLED)
+        self.delete_button.config(state=tk.DISABLED)
 
 
     def create_event_handler(self, function_name):
@@ -413,7 +431,7 @@ class GUIBuilder:
 
     def generate_code(self):
         code = "import tkinter as tk\n\n"
-        code += "class GeneratedApp:\n"
+        code += "class MyApp:\n"
         code += "    def __init__(self, root):\n"
         code += "        self.root = root\n"
         code += "        self.root.title(\"Generated GUI\")\n"
@@ -437,14 +455,15 @@ class GUIBuilder:
 
             row = control.grid_info().get('row', 0)
             col = control.grid_info().get('column', 0)
-            code += f"        self.{control_id}.grid(row={row}, column={col}, padx=5, pady=5, sticky='nsew')\n"
+            colspan = control.grid_info().get('columnspan', 0)
+            code += f"        self.{control_id}.grid(row={row}, column={col},columnspan={colspan}, padx=5, pady=5, sticky='nsew')\n"
 
         # Генерація методів обробників подій
         for control_id, control in self.controls.items():
             if isinstance(control, tk.Button):
                 code += f"\n    def {control_id}_command(self):\n"
-                code += f"        # TODO: Add code for {control_id}_command\n"
-                code += f"        print('{control_id}_command triggered')\n"
+                code += f"        # ПІДКАЗКА: додайте код для {control_id}\n"
+                code += f"        print('Код функції {control_id}_command виконано')\n"
             
             # Генерація обробників подій
             events = self.get_event_bindings(self.controls[control_id])
@@ -452,12 +471,12 @@ class GUIBuilder:
                 event_type = event.replace('<', '').replace('>', '')
                 event_for_name = event_type.replace('-', '_')
                 code += f"\n    def {control_id}_{event_for_name}_handler(self, event):\n"
-                code += f"        # TODO: Add code for {control_id}_{event_for_name}_handler\n"
+                code += f"        # ПІДКАЗКА: додайте код для події {control_id}_{event_for_name}_handler\n"
                 code += f"        print('{control_id}_{event_for_name}_handler triggered')\n"
 
         code += "\nif __name__ == '__main__':\n"
         code += "    root = tk.Tk()\n"
-        code += "    app = GeneratedApp(root)\n"
+        code += "    app = MyApp(root)\n"
         code += "    root.mainloop()\n"
         if self.project_file_path !="":
             base_path, _ = os.path.splitext(self.project_file_path)
@@ -469,7 +488,7 @@ class GUIBuilder:
                 with open(new_file_path, "w") as file:
                     file.write(code)
 
-                print("Code generated successfully.")
+                print("Код збережено.")
                 self.run_file_button.config(state=tk.NORMAL)
         else:
             messagebox.showerror("Error", "Спочатку збережіть проєкт")
