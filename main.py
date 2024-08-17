@@ -22,12 +22,12 @@ class GUIBuilder:
     def __init__(self, root):
         # Ініціалізація вікна, елементів керування та інших атрибутів
         self.root = root
-        self.root.title("Pyzarus")
+        self.root.title("TYPeGUI Generator")
 
         self.file_path = "myprogram.py"
         self.project_file_path = ""
 
-                # Ініціалізуйте атрибути для зберігання попереднього контролю та його фону
+        # Атрибути для зберігання попереднього контрола та його фону
         self.previous_control = None
         self.previous_control_bg = None
 
@@ -139,7 +139,7 @@ class GUIBuilder:
         new_file_path = base_path + ".py"        
         # Відкрити нове вікно з вмістом згенерованого файлу
         self.code_window = tk.Toplevel(self.root)
-        self.code_window.title("Pyzarus code editor" + new_file_path)
+        self.code_window.title("TYPeGUI Generator code editor" + new_file_path)
 
         # Створити редактор з лінійками
         text_editor_frame = TextEditorWithLineNumbers(self.code_window)
