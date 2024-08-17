@@ -1,6 +1,16 @@
+import tkinter as tk  # Додайте цей рядок для імпорту tkinter
+from tkinter import scrolledtext  # Якщо ви використовуєте scrolledtext у своєму коді
+
 class CustomText(tk.Text):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.font_size = 14  # Початковий розмір шрифту
+        self.font_family = "TkDefaultFont"  # Початковий шрифт (можна замінити на потрібний)
+
+        self.shownps = True
+        # Застосувати початковий шрифт
+        self.config(font=(self.font_family, self.font_size))
+
         self.bind("<KeyRelease>", self.highlight_spaces)
         self.bind("<Control-c>", self.copy_without_dots)
         self.bind("<Control-Insert>", self.copy_without_dots)  # Additional key binding for copying
@@ -9,13 +19,33 @@ class CustomText(tk.Text):
         self.bind("<Control-a>", self.select_all)
         self.bind("<Button-1>", self.hide_context_menu)  # Hide context menu on left-click
         self.bind("<Button-3>", self.show_context_menu)
+
+        self.bind("<Tab>", self.insert_tab)
+        self.bind("<Control-plus>", self.increase_font_size)  # Збільшити розмір шрифту
+        self.bind("<Control-minus>", self.decrease_font_size)  # Зменшити розмір шрифту
         self.bind("<KeyRelease>", self.highlight_spaces)
-        
+
+
         self.context_menu = tk.Menu(self, tearoff=0)
         self.context_menu.add_command(label="Copy", command=self.copy_without_dots)
         self.context_menu.add_command(label="Paste", command=self.paste_text)
         self.context_menu.add_command(label="Select All", command=self.select_all)
 
+
+    def increase_font_size(self, event=None):
+        print("font_size+")
+        self.font_size += 2
+        self.config(font=(self.font_family, self.font_size))
+        print(0)
+        return "break"
+
+    def decrease_font_size(self, event=None):
+        print("font_size-")
+        self.font_size -= 2
+        self.config(font=(self.font_family, self.font_size))
+        print(1)
+        return "break"
+    
     def highlight_spaces(self, event=None):
         self.tag_remove('space', '1.0', tk.END)
         text = self.get('1.0', tk.END)
@@ -27,15 +57,26 @@ class CustomText(tk.Text):
         self._replace_spaces()
         self.update_line_numbers()
 
-    def _replace_spaces(self):
+    def _replace_spaces(self,event=None):
         self.tag_remove('replace', '1.0', tk.END)
         text = self.get('1.0', tk.END)
         for index, char in enumerate(text):
-            if char == ' ':
-                pos = f"1.0 + {index} chars"
-                self.tag_add('replace', pos, f"{pos} +1c")
-                self.replace(pos, f"{pos} +1c", '·')
+            if self.shownps:
+                if char == ' ':
+                    pos = f"1.0 + {index} chars"
+                    self.tag_add('replace', pos, f"{pos} +1c")
+                    self.replace(pos, f"{pos} +1c", '·')
+            else:
+                if char == '·':
+                    pos = f"1.0 + {index} chars"
+                    self.tag_add('replace', pos, f"{pos} +1c")
+                    self.replace(pos, f"{pos} +1c", ' ')
+
         self.tag_configure('replace', foreground='red')
+
+    def insert_tab(self, event=None):
+        self.insert(tk.INSERT, '        ')  # Вставка 8 пробілів (відображаються як 8 крапок)
+        return "break"        
 
     def copy_without_dots(self, event=None):
         try:
@@ -88,8 +129,10 @@ class TextEditorWithLineNumbers(tk.Frame):
         self.scrollbar.set(*args)
         self.line_numbers.yview_moveto(args[0])  
     def __init__(self, master=None):
+                
         super().__init__(master)
         self.pack(expand=True, fill=tk.BOTH)
+
         # Додаємо смугу прокрутки
         self.scrollbar = tk.Scrollbar(self)
         self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)

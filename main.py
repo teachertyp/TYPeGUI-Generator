@@ -1,9 +1,20 @@
+"""
+Автор: Юрій Терещенко
+Email: yurchikte@gmail.com
+Опис: Ця програма призначена для спрощення процесу розробки
+      графічних інтерфейсів користувача (GUI) на мові програмування Python
+      за допомогою бібліотеки Tkinter. Вона дозволяє візуально конструювати 
+      інтерфейси, вибираючи необхідні елементи керування та налаштовуючи їх 
+      властивості, а потім автоматично генерує відповідний код на Python.
+"""
 import tkinter as tk
 from tkinter import ttk, filedialog, scrolledtext,messagebox
+from editor import CustomText, TextEditorWithLineNumbers
 
 import json
 import subprocess
 import os
+
 
 
 
@@ -23,6 +34,8 @@ class GUIBuilder:
         self.controls = {}
         self.current_control = None
         self.code_text = None
+
+
 
         self.frame = tk.Frame(self.root)
         self.frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
@@ -122,25 +135,29 @@ class GUIBuilder:
 
     def open_and_execute_code(self):
         base_path, _ = os.path.splitext(self.project_file_path)
-            # Додавання нового розширення
+        # Додавання нового розширення
         new_file_path = base_path + ".py"        
         # Відкрити нове вікно з вмістом згенерованого файлу
         self.code_window = tk.Toplevel(self.root)
-        self.code_window.title("Pyzarus code editor"+new_file_path)
+        self.code_window.title("Pyzarus code editor" + new_file_path)
 
-        # Створити віджет для відображення вмісту
-        self.code_text = scrolledtext.ScrolledText(self.code_window, wrap=tk.WORD, width=80, height=20)
-        self.code_text.pack(expand=True, fill=tk.BOTH, padx=10, pady=10)
+        # Створити редактор з лінійками
+        text_editor_frame = TextEditorWithLineNumbers(self.code_window)
+        text_editor_frame.pack(expand=True, fill=tk.BOTH, padx=10, pady=10)
 
-        # Завантажити вміст згенерованого файлу в віджет
-        print("fp:",self.project_file_path);
+
+        # Доступ до текстового поля з класу TextEditorWithLineNumbers
+        self.code_text = text_editor_frame.text_editor
 
         try:
-
             with open(new_file_path, "r") as file:
                 code_content = file.read()
                 self.code_text.insert(tk.END, code_content)
-                # Додати підсвічування коду
+                
+                # Виклик highlight_spaces для відображення крапок та оновлення нумерації рядків
+                self.code_text.highlight_spaces()
+                self.code_text.update_line_numbers()
+
         except FileNotFoundError:
             self.code_text.insert(tk.END, "# No code found\n")
 
@@ -148,12 +165,32 @@ class GUIBuilder:
         save_button = tk.Button(self.code_window, text="Зберегти", command=self.save_code)
         save_button.pack(side=tk.LEFT, padx=10, pady=10)
 
+        # Кнопка для відображення відступів
+        nonprintable_button = tk.Button(self.code_window, text="Показати/прибрабрати відступи", command=self.show_hide_nonprintable_symbols)
+        nonprintable_button.pack(side=tk.LEFT, padx=10, pady=10)        
+
         # Кнопка для виконання згенерованого коду
         execute_button = tk.Button(self.code_window, text="Виконати", command=self.execute_code)
         execute_button.pack(pady=10)
-    
+
+        #Термінал
+                # Текстове поле для виведення
+        self.lp_termianl = tk.Text(self)
+        self.lp_termianl.pack()
+
+
+    def show_hide_nonprintable_symbols(self):
+        print("shownps")
+        if self.code_text.shownps:
+            self.code_text.shownps = False
+            self.code_text._replace_spaces()
+        else:
+            self.code_text.shownps = True
+            self.code_text._replace_spaces()
+            
 
     def save_code(self):
+        print("savecode")
         if hasattr(self, 'code_text'):
             # Зберегти зміни в згенерованому файлі
             base_path, _ = os.path.splitext(self.project_file_path)
@@ -161,6 +198,7 @@ class GUIBuilder:
             new_file_path = base_path + ".py"
             if new_file_path:
                 code_content = self.code_text.get(1.0, tk.END)
+                code_content = code_content.replace('·', ' ')
                 with open(new_file_path, "w") as file:
                     file.write(code_content)
                     self.run_file_button.config(state=tk.NORMAL)
@@ -182,9 +220,11 @@ class GUIBuilder:
         return {k: v for k, v in config.items() if isinstance(v, (str, int, float, bool))}
 
     def save_project(self):
-        if self.project_file_path =="":
+        print("SP")
+        if self.project_file_path in ["",()] :
             self.project_file_path = filedialog.asksaveasfilename(defaultextension=".json")
-        if self.project_file_path:
+        print(self.project_file_path)
+        if self.project_file_path != ():
             data = {
                 "controls": []
             }
