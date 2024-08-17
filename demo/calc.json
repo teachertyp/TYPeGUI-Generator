@@ -1,0 +1,133 @@
+{
+    "controls": [
+        {
+            "id": "label_0",
+            "type": "Label",
+            "grid": {
+                "column": 0,
+                "row": 0,
+                "columnspan": 2,
+                "rowspan": 1,
+                "ipadx": 0,
+                "ipady": 0,
+                "padx": 5,
+                "pady": 5,
+                "sticky": "ew"
+            },
+            "config": {
+                "text": "==\u041c\u0406\u0419 \u041a\u0410\u041b\u042c\u041a\u0423\u041b\u042f\u0422\u041e\u0420=="
+            },
+            "children": []
+        },
+        {
+            "id": "label_1",
+            "type": "Label",
+            "grid": {
+                "column": 0,
+                "row": 1,
+                "columnspan": 1,
+                "rowspan": 1,
+                "ipadx": 0,
+                "ipady": 0,
+                "padx": 5,
+                "pady": 5,
+                "sticky": "w"
+            },
+            "config": {
+                "text": "\u041f\u0435\u0440\u0448\u0435 \u0447\u0438\u0441\u043b\u043e"
+            },
+            "children": []
+        },
+        {
+            "id": "entry_2",
+            "type": "Entry",
+            "grid": {
+                "column": 1,
+                "row": 1,
+                "columnspan": 1,
+                "rowspan": 1,
+                "ipadx": 0,
+                "ipady": 0,
+                "padx": 5,
+                "pady": 5,
+                "sticky": "w"
+            },
+            "config": {},
+            "children": []
+        },
+        {
+            "id": "label_3",
+            "type": "Label",
+            "grid": {
+                "column": 0,
+                "row": 3,
+                "columnspan": 1,
+                "rowspan": 1,
+                "ipadx": 0,
+                "ipady": 0,
+                "padx": 5,
+                "pady": 5,
+                "sticky": "w"
+            },
+            "config": {
+                "text": "\u0414\u0440\u0443\u0433\u0435 \u0447\u0438\u0441\u043b\u043e"
+            },
+            "children": []
+        },
+        {
+            "id": "entry_4",
+            "type": "Entry",
+            "grid": {
+                "column": 1,
+                "row": 3,
+                "columnspan": 1,
+                "rowspan": 1,
+                "ipadx": 0,
+                "ipady": 0,
+                "padx": 5,
+                "pady": 5,
+                "sticky": "w"
+            },
+            "config": {},
+            "children": []
+        },
+        {
+            "id": "label_5",
+            "type": "Label",
+            "grid": {
+                "column": 0,
+                "row": 5,
+                "columnspan": 2,
+                "rowspan": 1,
+                "ipadx": 0,
+                "ipady": 0,
+                "padx": 5,
+                "pady": 5,
+                "sticky": "ew"
+            },
+            "config": {
+                "text": "\u0420\u0435\u0437\u0443\u043b\u044c\u0442\u0430\u0442:"
+            },
+            "children": []
+        },
+        {
+            "id": "button_6",
+            "type": "Button",
+            "grid": {
+                "column": 0,
+                "row": 6,
+                "columnspan": 2,
+                "rowspan": 1,
+                "ipadx": 0,
+                "ipady": 0,
+                "padx": 5,
+                "pady": 5,
+                "sticky": "ew"
+            },
+            "config": {
+                "text": "\u0421\u0443\u043c\u0430"
+            },
+            "children": []
+        }
+    ]
+}
